@@ -1,0 +1,30 @@
+.ic-title-bar {
+    padding: 0.75rem 1.5rem;
+    background-color: #f3f2f2;
+    border-bottom: 1px solid #dddbda;
+    text-align: center;
+}
+
+.ic-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #181818;
+    margin: 0;
+}
+
+.ic-title-green {
+    color: #0d9f3f;
+}
+
+.ic-body {
+    padding: 1rem 1.5rem 0.5rem;
+}
+
+.ic-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid #dddbda;
+    background-color: #f3f2f2;
+}

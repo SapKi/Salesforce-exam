@@ -1,0 +1,26 @@
+<template>
+    <div class="ic-title-bar">
+        <h2 class={titleClass}>Internal Comment</h2>
+    </div>
+    <div class="ic-body">
+        <lightning-textarea
+            name="commentBody"
+            label=""
+            value={commentBody}
+            placeholder="Enter your comment..."
+            onchange={handleChange}
+        ></lightning-textarea>
+    </div>
+    <div class="ic-footer">
+        <lightning-button
+            label="Cancel"
+            onclick={handleCancel}
+        ></lightning-button>
+        <lightning-button
+            variant="brand"
+            label="Save"
+            disabled={isSaveDisabled}
+            onclick={handleSave}
+        ></lightning-button>
+    </div>
+</template>
