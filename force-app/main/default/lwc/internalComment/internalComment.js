@@ -41,7 +41,6 @@ export default class InternalComment extends LightningElement {
     }
 
     handleSave() {
-        this.errorMessage = '';
         const fields = {
             [BODY_FIELD.fieldApiName]: this.commentBody,
             [ACCOUNT_FIELD.fieldApiName]: this.recordId
@@ -59,11 +58,18 @@ export default class InternalComment extends LightningElement {
                 this.dispatchEvent(new CloseActionScreenEvent());
             })
             .catch((error) => {
-                // Bonus 1: show error inline inside the modal
+                // Bonus 1: show error both inline and as toast
                 this.errorMessage =
                     error?.body?.output?.errors?.[0]?.message ||
                     error?.body?.message ||
                     'An unexpected error occurred.';
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error saving comment',
+                        message: this.errorMessage,
+                        variant: 'error'
+                    })
+                );
             });
     }
 }
