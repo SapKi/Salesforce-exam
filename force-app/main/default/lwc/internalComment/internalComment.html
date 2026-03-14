@@ -10,6 +10,9 @@
             placeholder="Enter your comment..."
             onchange={handleChange}
         ></lightning-textarea>
+        <template if:true={errorMessage}>
+            <p class="ic-error">{errorMessage}</p>
+        </template>
     </div>
     <div class="ic-footer">
         <lightning-button

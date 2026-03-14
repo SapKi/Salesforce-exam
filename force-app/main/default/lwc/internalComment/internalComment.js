@@ -12,6 +12,7 @@ import ACCOUNT_FIELD from '@salesforce/schema/Internal_Comment__c.Account__c';
 export default class InternalComment extends LightningElement {
     @api recordId;
     @track commentBody = '';
+    @track errorMessage = '';
 
     @wire(getRecord, { recordId: userId, fields: [USER_NAME_FIELD] })
     currentUser;
@@ -32,6 +33,7 @@ export default class InternalComment extends LightningElement {
 
     handleChange(event) {
         this.commentBody = event.target.value;
+        this.errorMessage = '';
     }
 
     handleCancel() {
@@ -39,6 +41,7 @@ export default class InternalComment extends LightningElement {
     }
 
     handleSave() {
+        this.errorMessage = '';
         const fields = {
             [BODY_FIELD.fieldApiName]: this.commentBody,
             [ACCOUNT_FIELD.fieldApiName]: this.recordId
@@ -56,13 +59,11 @@ export default class InternalComment extends LightningElement {
                 this.dispatchEvent(new CloseActionScreenEvent());
             })
             .catch((error) => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error saving comment',
-                        message: error.body?.message ?? 'An unexpected error occurred.',
-                        variant: 'error'
-                    })
-                );
+                // Bonus 1: show error inline inside the modal
+                this.errorMessage =
+                    error?.body?.output?.errors?.[0]?.message ||
+                    error?.body?.message ||
+                    'An unexpected error occurred.';
             });
     }
 }
