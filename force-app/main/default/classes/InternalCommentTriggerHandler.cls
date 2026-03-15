@@ -62,6 +62,30 @@ public class InternalCommentTriggerHandler {
         return result;
     }
 
+    // ─── AuraEnabled method called from LWC ─────────────────────────────────────
+
+    @AuraEnabled
+    public static void saveComment(String body, Id accountId) {
+        Integer maxLen = getMaxLineLength();
+
+        if (isWrapEnabled()) {
+            body = wrapBody(body, maxLen);
+        } else {
+            for (String line : body.split('\n', -1)) {
+                if (line.length() > maxLen) {
+                    throw new AuraHandledException(
+                        'Row out of boundary of ' + maxLen + ' character'
+                    );
+                }
+            }
+        }
+
+        insert new Internal_Comment__c(
+            Body__c = body,
+            Account__c = accountId
+        );
+    }
+
     // ─── Custom Metadata helpers ─────────────────────────────────────────────────
 
     @TestVisible

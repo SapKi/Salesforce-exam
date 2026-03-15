@@ -1,13 +1,11 @@
 import { LightningElement, api, wire, track } from 'lwc';
-import { getRecord, createRecord } from 'lightning/uiRecordApi';
+import { getRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CloseActionScreenEvent } from 'lightning/actions';
+import saveComment from '@salesforce/apex/InternalCommentTriggerHandler.saveComment';
 import userId from '@salesforce/user/Id';
 import USER_NAME_FIELD from '@salesforce/schema/User.Name';
 import ACCOUNT_NAME_FIELD from '@salesforce/schema/Account.Name';
-import INTERNAL_COMMENT_OBJECT from '@salesforce/schema/Internal_Comment__c';
-import BODY_FIELD from '@salesforce/schema/Internal_Comment__c.Body__c';
-import ACCOUNT_FIELD from '@salesforce/schema/Internal_Comment__c.Account__c';
 
 export default class InternalComment extends LightningElement {
     @api recordId;
@@ -41,12 +39,7 @@ export default class InternalComment extends LightningElement {
     }
 
     handleSave() {
-        const fields = {
-            [BODY_FIELD.fieldApiName]: this.commentBody,
-            [ACCOUNT_FIELD.fieldApiName]: this.recordId
-        };
-
-        createRecord({ apiName: INTERNAL_COMMENT_OBJECT.objectApiName, fields })
+        saveComment({ body: this.commentBody, accountId: this.recordId })
             .then(() => {
                 this.dispatchEvent(
                     new ShowToastEvent({
@@ -58,14 +51,11 @@ export default class InternalComment extends LightningElement {
                 this.dispatchEvent(new CloseActionScreenEvent());
             })
             .catch((error) => {
-                // Bonus 1: show error both inline and as toast
                 this.errorMessage =
-                    error?.body?.output?.errors?.[0]?.message ||
-                    error?.body?.message ||
-                    'An unexpected error occurred.';
+                    error?.body?.message || 'An unexpected error occurred.';
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'Error saving comment',
+                        title: 'Error saving comment!',
                         message: this.errorMessage,
                         variant: 'error'
                     })
