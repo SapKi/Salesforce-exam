@@ -3,13 +3,14 @@
         <h2 class={titleClass}>Internal Comment</h2>
     </div>
     <div class="ic-body">
-        <lightning-textarea
+        <textarea
             name="commentBody"
             label=""
             value={commentBody}
             placeholder="Enter your comment..."
+            oninput={handleChange}
             onchange={handleChange}
-        ></lightning-textarea>
+        ></textarea>
         <template if:true={errorMessage}>
             <p class="ic-error">{errorMessage}</p>
         </template>
