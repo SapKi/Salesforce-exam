@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(sf apex:*)",
-      "Bash(sf project:*)"
+      "Bash(sf project:*)",
+      "Bash(sf org:*)"
     ]
   }
 }

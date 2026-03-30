@@ -1,0 +1,19 @@
+<template>
+    <lightning-card title="External Integration" icon-name="utility:connected_apps">
+        <div class="slds-m-around_medium">
+            <lightning-button
+                label="Sync Account"
+                variant="brand"
+                onclick={handleSync}
+                disabled={isLoading}
+            ></lightning-button>
+            <template lwc:if={isLoading}>
+                <lightning-spinner
+                    alternative-text="Syncing..."
+                    size="small"
+                    class="slds-m-left_small"
+                ></lightning-spinner>
+            </template>
+        </div>
+    </lightning-card>
+</template>
