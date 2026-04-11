@@ -4,6 +4,6 @@
     <protected>false</protected>
     <values>
         <field>Endpoint_URL__c</field>
-        <value xsi:type="xsd:string">https://jsonplaceholder.typicode.com</value>
+        <value xsi:type="xsd:string">SLACK_WEBHOOK_URL_HERE</value>
     </values>
 </CustomMetadata>

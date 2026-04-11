@@ -16,14 +16,16 @@ public class AccountSyncQueueable implements Queueable, Database.AllowsCallouts 
         List<Account> toUpdate = new List<Account>();
 
         for (Account acc : accounts) {
-            Map<String, Object> payload = AccountPayloadBuilder.buildPayload(acc);
+            Map<String, Object> payload = AccountPayloadBuilder.buildSlackPayload(acc);
             Account updatedAcc = new Account(Id = acc.Id, Last_Sync_DateTime__c = Datetime.now());
 
             try {
                 IntegrationService.IntegrationResult result = IntegrationService.postAccount(payload);
-                updatedAcc.Last_Sync_Status__c    = result.isSuccess ? 'Success' : 'Failed';
-                updatedAcc.Last_Response_Code__c  = result.statusCode;
-                updatedAcc.Last_Response_Message__c = result.responseBody.abbreviate(255);
+                updatedAcc.Last_Sync_Status__c      = result.isSuccess ? 'Success' : 'Failed';
+                updatedAcc.Last_Response_Code__c    = result.statusCode;
+                updatedAcc.Last_Response_Message__c = result.responseBody != null
+                    ? result.responseBody.abbreviate(255)
+                    : '';
             } catch (Exception e) {
                 updatedAcc.Last_Sync_Status__c      = 'Failed';
                 updatedAcc.Last_Response_Code__c    = 0;

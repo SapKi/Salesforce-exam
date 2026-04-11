@@ -2,7 +2,7 @@
 private class AccountPayloadBuilderTest {
 
     @isTest
-    static void buildPayload_mapsAllFields() {
+    static void buildSlackPayload_containsBlocks() {
         Account acc = new Account(
             Name     = 'Acme Corp',
             Phone    = '555-0100',
@@ -12,25 +12,35 @@ private class AccountPayloadBuilderTest {
         insert acc;
         acc = [SELECT Id, Name, Phone, Website, Industry FROM Account WHERE Id = :acc.Id];
 
-        Map<String, Object> payload = AccountPayloadBuilder.buildPayload(acc);
+        Map<String, Object> payload = AccountPayloadBuilder.buildSlackPayload(acc);
 
-        System.assertEquals(acc.Id,            payload.get('id'),       'id mismatch');
-        System.assertEquals('Acme Corp',        payload.get('name'),     'name mismatch');
-        System.assertEquals('555-0100',         payload.get('phone'),    'phone mismatch');
-        System.assertEquals('https://acme.com', payload.get('website'),  'website mismatch');
-        System.assertEquals('Technology',       payload.get('industry'), 'industry mismatch');
+        System.assert(payload.containsKey('blocks'), 'payload must have blocks');
+        List<Object> blocks = (List<Object>) payload.get('blocks');
+        System.assert(blocks.size() > 0, 'blocks must not be empty');
     }
 
     @isTest
-    static void buildPayload_handlesNullOptionalFields() {
+    static void buildSlackPayload_headerContainsNewAccount() {
+        Account acc = new Account(Name = 'Test Account');
+        insert acc;
+        acc = [SELECT Id, Name, Phone, Website, Industry FROM Account WHERE Id = :acc.Id];
+
+        Map<String, Object> payload = AccountPayloadBuilder.buildSlackPayload(acc);
+        String serialized = JSON.serialize(payload);
+
+        System.assert(serialized.contains('New Salesforce Account Created'), 'header text missing');
+        System.assert(serialized.contains('Test Account'), 'account name missing');
+    }
+
+    @isTest
+    static void buildSlackPayload_handlesNullOptionalFields() {
         Account acc = new Account(Name = 'Minimal Account');
         insert acc;
         acc = [SELECT Id, Name, Phone, Website, Industry FROM Account WHERE Id = :acc.Id];
 
-        Map<String, Object> payload = AccountPayloadBuilder.buildPayload(acc);
+        Map<String, Object> payload = AccountPayloadBuilder.buildSlackPayload(acc);
+        String serialized = JSON.serialize(payload);
 
-        System.assertEquals(acc.Id,             payload.get('id'));
-        System.assertEquals('Minimal Account',  payload.get('name'));
-        System.assertNotEquals(null, payload, 'payload should not be null');
+        System.assert(serialized.contains('—'), 'null fields should show dash');
     }
 }

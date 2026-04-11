@@ -9,7 +9,7 @@ public class IntegrationService {
     @TestVisible
     private static String endpointBaseOverride;
 
-    private static String getEndpointBase() {
+    private static String getWebhookUrl() {
         if (endpointBaseOverride != null) {
             return endpointBaseOverride;
         }
@@ -24,7 +24,7 @@ public class IntegrationService {
 
     public static IntegrationResult postAccount(Map<String, Object> payload) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(getEndpointBase() + '/posts');
+        req.setEndpoint(getWebhookUrl());
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(payload));
